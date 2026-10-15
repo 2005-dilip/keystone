@@ -1,0 +1,61 @@
+{
+  "project": {
+    "name": "Keystone Renovations",
+    "project_ref": "epnmccwejtfdijjqtvpe",
+    "supabase_url": "https://epnmccwejtfdijjqtvpe.supabase.co",
+    "publishable_key": "sb_publishable_ERnJogpO6gIVAtAldHd0qg_1eIUGaMv",
+    "created_at": "2026-10-14T22:45:00.000Z"
+  },
+  "database": {
+    "table_name": "public.quote_requests",
+    "rls_enabled": true,
+    "columns": [
+      { "name": "id", "type": "UUID", "default": "gen_random_uuid()", "primary_key": true },
+      { "name": "name", "type": "TEXT", "nullable": false },
+      { "name": "phone", "type": "TEXT", "nullable": false },
+      { "name": "email", "type": "TEXT", "nullable": false },
+      { "name": "service", "type": "TEXT", "nullable": false },
+      { "name": "project_details", "type": "TEXT", "nullable": true },
+      { "name": "status", "type": "TEXT", "default": "'new'", "nullable": false },
+      { "name": "created_at", "type": "TIMESTAMPTZ", "default": "now()", "nullable": false },
+      { "name": "updated_at", "type": "TIMESTAMPTZ", "default": "now()", "nullable": false }
+    ],
+    "indexes": [
+      {
+        "name": "idx_quote_requests_lookup",
+        "definition": "CREATE INDEX idx_quote_requests_lookup ON public.quote_requests (email, phone, created_at DESC);"
+      }
+    ],
+    "migration_sql": "CREATE TABLE IF NOT EXISTS public.quote_requests (\n    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n    name TEXT NOT NULL,\n    phone TEXT NOT NULL,\n    email TEXT NOT NULL,\n    service TEXT NOT NULL,\n    project_details TEXT,\n    status TEXT NOT NULL DEFAULT 'new',\n    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),\n    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()\n);\nCREATE INDEX IF NOT EXISTS idx_quote_requests_lookup ON public.quote_requests (email, phone, created_at DESC);\nALTER TABLE public.quote_requests ENABLE ROW LEVEL SECURITY;\nCREATE POLICY \"Allow quote submissions\" ON public.quote_requests FOR INSERT TO anon, authenticated WITH CHECK (char_length(name) > 0 AND char_length(phone) > 0 AND char_length(email) > 0 AND char_length(service) > 0);"
+  },
+  "edge_function": {
+    "name": "submit-quote",
+    "endpoint": "https://epnmccwejtfdijjqtvpe.supabase.co/functions/v1/submit-quote",
+    "status": "ACTIVE",
+    "version": 1,
+    "verify_jwt": false,
+    "local_path": "supabase/functions/submit-quote/index.ts",
+    "secrets": [
+      { "name": "RESEND_API_KEY", "description": "API Key from resend.com for sending transactional emails" },
+      { "name": "OWNER_EMAIL", "default": "gaurav.tyagi@keystonerenov.com", "description": "Email address of the business owner receiving quote lead alerts" },
+      { "name": "FROM_EMAIL", "default": "Keystone Renovations <onboarding@resend.dev>", "description": "Sender email address (or your verified domain sender)" }
+    ],
+    "features": [
+      "CORS headers with OPTIONS preflight support",
+      "Input validation (name, phone, email format, service)",
+      "Duplicate submission detection within 10-minute window",
+      "Lead notification email to business owner via Resend",
+      "Confirmation acknowledgment email to visitor via Resend"
+    ]
+  },
+  "verification": {
+    "test_payload": {
+      "name": "Jane Miller",
+      "phone": "403-555-0199",
+      "email": "jane.miller@example.com",
+      "service": "Basement Development",
+      "project_details": "Looking to develop a 750 sq ft legal basement suite with full bathroom and kitchen."
+    },
+    "curl_test_command": "curl.exe -s -i -X POST \"https://epnmccwejtfdijjqtvpe.supabase.co/functions/v1/submit-quote\" -H \"Content-Type: application/json\" -d '{\"name\":\"Jane Miller\",\"phone\":\"403-555-0199\",\"email\":\"jane.miller@example.com\",\"service\":\"Basement Development\",\"project_details\":\"750 sq ft legal basement suite\"}'"
+  }
+}
