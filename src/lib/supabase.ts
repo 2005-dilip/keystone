@@ -70,3 +70,153 @@ export async function submitQuoteForm(formData: QuoteFormData): Promise<Submissi
     }
   }
 }
+
+/**
+ * Checks if a user has an active record in public.admin_users
+ */
+export async function checkIsAdmin(userId: string): Promise<boolean> {
+  try {
+    const { data, error } = await supabase
+      .from('admin_users')
+      .select('user_id')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (error || !data) {
+      return false;
+    }
+
+    return true;
+  } catch (err) {
+    console.error('Failed to verify admin status:', err);
+    return false;
+  }
+}
+
+/**
+ * Fetches aggregate counts of leads grouped by status
+ */
+export async function fetchLeadStats(): Promise<{
+  total: number;
+  new: number;
+  contacted: number;
+  qualified: number;
+  converted: number;
+  lost: number;
+}> {
+  const { data, error } = await supabase
+    .from('quote_requests')
+    .select('status');
+
+  if (error) {
+    throw new Error(`Failed to load lead statistics: ${error.message}`);
+  }
+
+  const stats = {
+    total: data.length,
+    new: 0,
+    contacted: 0,
+    qualified: 0,
+    converted: 0,
+    lost: 0,
+  };
+
+  data.forEach((row: { status: string }) => {
+    const s = row.status?.toLowerCase();
+    if (s === 'new') stats.new++;
+    else if (s === 'contacted') stats.contacted++;
+    else if (s === 'qualified') stats.qualified++;
+    else if (s === 'converted') stats.converted++;
+    else if (s === 'lost') stats.lost++;
+  });
+
+  return stats;
+}
+
+/**
+ * Fetches paginated, filtered, and sorted leads from public.quote_requests
+ */
+export async function fetchLeads(options: {
+  search?: string;
+  status?: string;
+  service?: string;
+  sortOrder?: 'newest' | 'oldest';
+  page?: number;
+  pageSize?: number;
+}) {
+  const page = options.page || 1;
+  const pageSize = options.pageSize || 10;
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  let query = supabase
+    .from('quote_requests')
+    .select('*', { count: 'exact' });
+
+  // Status Filter
+  if (options.status && options.status !== 'all') {
+    query = query.eq('status', options.status);
+  }
+
+  // Service Filter
+  if (options.service && options.service !== 'all') {
+    query = query.eq('service', options.service);
+  }
+
+  // Search Filter (name, email, phone)
+  if (options.search && options.search.trim()) {
+    const term = `%${options.search.trim()}%`;
+    query = query.or(`name.ilike.${term},email.ilike.${term},phone.ilike.${term}`);
+  }
+
+  // Sorting
+  const ascending = options.sortOrder === 'oldest';
+  query = query.order('created_at', { ascending });
+
+  // Pagination
+  query = query.range(from, to);
+
+  const { data, count, error } = await query;
+
+  if (error) {
+    throw new Error(`Failed to fetch leads: ${error.message}`);
+  }
+
+  return {
+    data: (data || []) as import('../types').QuoteRequest[],
+    count: count || 0,
+  };
+}
+
+/**
+ * Updates a lead's status in public.quote_requests
+ */
+export async function updateLeadStatus(id: string, status: import('../types').LeadStatus) {
+  const { data, error } = await supabase
+    .from('quote_requests')
+    .update({ status, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) {
+    throw new Error(`Failed to update lead status: ${error.message}`);
+  }
+
+  return data as import('../types').QuoteRequest;
+}
+
+/**
+ * Deletes a lead record from public.quote_requests
+ */
+export async function deleteLead(id: string): Promise<void> {
+  const { error } = await supabase
+    .from('quote_requests')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    throw new Error(`Failed to delete lead: ${error.message}`);
+  }
+}
+

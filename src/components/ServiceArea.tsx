@@ -1,6 +1,10 @@
 import React from 'react';
 
-export const ServiceArea: React.FC = () => {
+interface ServiceAreaProps {
+  onViewServiceArea?: (regionId?: string) => void;
+}
+
+export const ServiceArea: React.FC<ServiceAreaProps> = ({ onViewServiceArea }) => {
   return (
     <section className="area" id="areas">
       <div className="wrap area-grid">
@@ -11,14 +15,64 @@ export const ServiceArea: React.FC = () => {
             Keystone Renovations is headquartered in Calgary and regularly works throughout Edmonton, Red Deer, and communities across the province. If it's in Alberta, chances are we've already got a crew nearby.
           </p>
           <div className="area-list">
-            <span className="hq">Calgary — HQ</span>
-            <span>Edmonton</span>
-            <span>Red Deer</span>
-            <span>Alberta-Wide</span>
+            <button
+              type="button"
+              className="area-pill hq"
+              onClick={() => onViewServiceArea?.('calgary')}
+              aria-label="View Calgary service area details"
+            >
+              Calgary — HQ
+            </button>
+            <button
+              type="button"
+              className="area-pill"
+              onClick={() => onViewServiceArea?.('edmonton')}
+              aria-label="View Edmonton service area details"
+            >
+              Edmonton
+            </button>
+            <button
+              type="button"
+              className="area-pill"
+              onClick={() => onViewServiceArea?.('red-deer')}
+              aria-label="View Red Deer service area details"
+            >
+              Red Deer
+            </button>
+            <button
+              type="button"
+              className="area-pill"
+              onClick={() => onViewServiceArea?.('alberta-wide')}
+              aria-label="View Alberta-wide service area details"
+            >
+              Alberta-Wide
+            </button>
+          </div>
+
+          <div className="area-action">
+            <button
+              type="button"
+              onClick={() => onViewServiceArea?.()}
+              className="btn btn-primary area-view-more-btn"
+            >
+              See Full Service Area &amp; Regional FAQs <span className="arrow" aria-hidden="true">→</span>
+            </button>
           </div>
         </div>
 
-        <div className="area-map rv" aria-hidden="true">
+        <div
+          className="area-map rv clickable"
+          onClick={() => onViewServiceArea?.()}
+          role={onViewServiceArea ? 'button' : undefined}
+          tabIndex={onViewServiceArea ? 0 : undefined}
+          onKeyDown={(e) => {
+            if (onViewServiceArea && (e.key === 'Enter' || e.key === ' ')) {
+              e.preventDefault();
+              onViewServiceArea();
+            }
+          }}
+          aria-label="View full Alberta service coverage and regional FAQs"
+        >
           <svg viewBox="0 0 560 480" xmlns="http://www.w3.org/2000/svg">
             {/* Alberta Outline */}
             <polygon

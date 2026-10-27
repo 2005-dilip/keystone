@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Phone, Mail, MapPin, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { submitQuoteForm } from '../lib/supabase';
 import type { QuoteFormData } from '../types';
@@ -17,6 +17,26 @@ export const ContactSection: React.FC = () => {
     type: 'success' | 'error' | 'duplicate';
     message: string;
   } | null>(null);
+
+  // Auto-focus and select Name field when navigated to #contact
+  useEffect(() => {
+    const focusIfContactHash = () => {
+      if (window.location.hash === '#contact') {
+        const timer = setTimeout(() => {
+          const nameInput = document.getElementById('fname') as HTMLInputElement | null;
+          if (nameInput) {
+            nameInput.focus();
+            nameInput.select();
+          }
+        }, 500);
+        return () => clearTimeout(timer);
+      }
+    };
+
+    focusIfContactHash();
+    window.addEventListener('hashchange', focusIfContactHash);
+    return () => window.removeEventListener('hashchange', focusIfContactHash);
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -117,14 +137,16 @@ export const ContactSection: React.FC = () => {
           {/* Contact Quote Form */}
           <form className="contact-form" onSubmit={handleSubmit}>
             {feedback && (
-              <div className={`form-feedback ${feedback.type === 'error' ? 'error' : 'success'}`}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+              <div className={`form-feedback ${feedback.type}`}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
                   {feedback.type === 'error' ? (
                     <AlertCircle size={20} color="#EF4444" style={{ flexShrink: 0, marginTop: '2px' }} />
+                  ) : feedback.type === 'duplicate' ? (
+                    <AlertCircle size={20} color="#F59E0B" style={{ flexShrink: 0, marginTop: '2px' }} />
                   ) : (
-                    <CheckCircle2 size={20} color="var(--mint)" style={{ flexShrink: 0, marginTop: '2px' }} />
+                    <CheckCircle2 size={20} color="#34D399" style={{ flexShrink: 0, marginTop: '2px' }} />
                   )}
-                  <span>{feedback.message}</span>
+                  <span style={{ fontSize: '14.5px', lineHeight: 1.5 }}>{feedback.message}</span>
                 </div>
               </div>
             )}

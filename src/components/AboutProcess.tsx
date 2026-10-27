@@ -1,6 +1,10 @@
 import React from 'react';
 
-export const AboutProcess: React.FC = () => {
+interface AboutProcessProps {
+  onViewAbout?: () => void;
+}
+
+export const AboutProcess: React.FC<AboutProcessProps> = ({ onViewAbout }) => {
   return (
     <section className="paper" id="about">
       {/* About Section */}
@@ -33,6 +37,17 @@ export const AboutProcess: React.FC = () => {
           <p>
             No subcontracting the hard parts. No disappearing after the deposit clears. Every project — whether it's a new basement suite or a full commercial fit-out — gets the same crew from the first walkthrough to the final inspection.
           </p>
+
+          <div className="about-action">
+            <button
+              type="button"
+              onClick={onViewAbout}
+              className="btn btn-primary about-view-more-btn"
+              aria-label="Read our full story and founder FAQs"
+            >
+              Read Our Story &amp; Founder FAQs <span className="arrow" aria-hidden="true">→</span>
+            </button>
+          </div>
         </div>
       </div>
 

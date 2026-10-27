@@ -183,112 +183,248 @@ Deno.serve(async (req: Request) => {
     };
 
     if (resendApiKey) {
-      // Email 1: Lead notification to Owner
+      // Email 1: Lead notification to Owner (High-contrast, mobile-first, direct action buttons)
       const ownerSubject = `[New Lead] ${service} - ${name} (${phone})`;
+      const formattedDate = new Date().toLocaleString("en-US", {
+        timeZone: "America/Edmonton",
+        dateStyle: "medium",
+        timeStyle: "short",
+      });
+
       const ownerHtml = `
         <!DOCTYPE html>
-        <html>
+        <html lang="en">
         <head>
           <meta charset="utf-8">
-          <style>
-            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #041712; color: #F4EFE6; margin: 0; padding: 20px; }
-            .card { background-color: #071E17; border: 1px solid #1C5645; border-radius: 8px; max-width: 600px; margin: 0 auto; padding: 32px; }
-            .header { border-bottom: 2px solid #7FE8C8; padding-bottom: 16px; margin-bottom: 24px; }
-            .title { color: #7FE8C8; font-size: 24px; margin: 0 0 8px 0; font-weight: 700; }
-            .sub { color: #A8B8B0; font-size: 14px; margin: 0; text-transform: uppercase; letter-spacing: 0.05em; }
-            .field-row { margin-bottom: 16px; }
-            .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #C59B27; margin-bottom: 4px; font-weight: 600; }
-            .value { font-size: 16px; color: #F4EFE6; }
-            .value a { color: #7FE8C8; text-decoration: none; }
-            .box { background-color: #0C1814; border: 1px solid #1C5645; border-radius: 6px; padding: 16px; margin-top: 16px; font-size: 15px; line-height: 1.5; white-space: pre-wrap; }
-            .footer { margin-top: 32px; padding-top: 16px; border-top: 1px solid #1C5645; font-size: 12px; color: #5C7268; text-align: center; }
-          </style>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>New Quote Request - Keystone Renovations</title>
         </head>
-        <body>
-          <div class="card">
-            <div class="header">
-              <h1 class="title">New Quote Request</h1>
-              <p class="sub">Keystone Renovations Lead Notification</p>
-            </div>
-            <div class="field-row">
-              <div class="label">Customer Name</div>
-              <div class="value"><strong>${escapeHtml(name)}</strong></div>
-            </div>
-            <div class="field-row">
-              <div class="label">Phone</div>
-              <div class="value"><a href="tel:${escapeHtml(phone)}">${escapeHtml(phone)}</a></div>
-            </div>
-            <div class="field-row">
-              <div class="label">Email</div>
-              <div class="value"><a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></div>
-            </div>
-            <div class="field-row">
-              <div class="label">Requested Service</div>
-              <div class="value" style="color:#7FE8C8; font-weight:600;">${escapeHtml(service)}</div>
-            </div>
-            <div class="field-row">
-              <div class="label">Project Details &amp; Notes</div>
-              <div class="box">${escapeHtml(project_details || "No additional project notes provided.")}</div>
-            </div>
-            <div class="footer">
-              Lead ID: ${inserted.id} &bull; Received: ${new Date().toLocaleString()} (Alberta Time)
-            </div>
-          </div>
+        <body style="margin: 0; padding: 24px 12px; background-color: #F1F5F9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;">
+          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+              <td align="center">
+                <!-- Card Container -->
+                <table role="presentation" width="100%" style="max-width: 580px; background-color: #FFFFFF; border-radius: 12px; border: 1px solid #E2E8F0; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06); overflow: hidden; text-align: left;" border="0" cellspacing="0" cellpadding="0">
+                  
+                  <!-- Top Header Banner -->
+                  <tr>
+                    <td style="background-color: #071E17; padding: 26px 30px; border-bottom: 3px solid #10B981;">
+                      <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
+                        <tr>
+                          <td>
+                            <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; color: #A7F3D0; text-transform: uppercase; margin-bottom: 6px;">
+                              KEY<span style="color: #F59E0B;">STONE</span> RENOVATIONS
+                            </div>
+                            <h1 style="color: #FFFFFF; font-size: 24px; font-weight: 800; margin: 0; line-height: 1.2;">
+                              New Quote Request
+                            </h1>
+                          </td>
+                          <td align="right" valign="top">
+                            <span style="background-color: rgba(16, 185, 129, 0.2); color: #34D399; border: 1px solid rgba(52, 211, 153, 0.4); font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.05em; display: inline-block;">
+                              ⚡ New Lead
+                            </span>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+
+                  <!-- Main Content Area -->
+                  <tr>
+                    <td style="padding: 28px 30px 20px;">
+                      
+                      <!-- Quick Action Buttons -->
+                      <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 24px;">
+                        <tr>
+                          <td>
+                            <a href="tel:${escapeHtml(phone)}" style="display: inline-block; background-color: #071E17; color: #FFFFFF; font-weight: 700; font-size: 14px; text-decoration: none; padding: 12px 20px; border-radius: 8px; margin-right: 8px; margin-bottom: 8px;">
+                              📞 Call Lead Now
+                            </a>
+                            <a href="mailto:${escapeHtml(email)}" style="display: inline-block; background-color: #F8FAFC; color: #0F172A; font-weight: 700; font-size: 14px; text-decoration: none; padding: 11px 18px; border-radius: 8px; border: 1px solid #CBD5E1; margin-bottom: 8px;">
+                              ✉️ Email Lead
+                            </a>
+                          </td>
+                        </tr>
+                      </table>
+
+                      <!-- Details Table -->
+                      <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0" style="border-collapse: separate; border-spacing: 0; background-color: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; overflow: hidden; margin-bottom: 24px;">
+                        <tr>
+                          <td style="padding: 14px 18px; border-bottom: 1px solid #E2E8F0; width: 35%; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B;">
+                            Customer Name
+                          </td>
+                          <td style="padding: 14px 18px; border-bottom: 1px solid #E2E8F0; font-size: 16px; font-weight: 700; color: #0F172A;">
+                            ${escapeHtml(name)}
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 14px 18px; border-bottom: 1px solid #E2E8F0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B;">
+                            Requested Service
+                          </td>
+                          <td style="padding: 14px 18px; border-bottom: 1px solid #E2E8F0;">
+                            <span style="background-color: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; font-size: 13px; font-weight: 700; padding: 4px 10px; border-radius: 6px; display: inline-block;">
+                              ${escapeHtml(service)}
+                            </span>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 14px 18px; border-bottom: 1px solid #E2E8F0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B;">
+                            Phone Number
+                          </td>
+                          <td style="padding: 14px 18px; border-bottom: 1px solid #E2E8F0; font-size: 15px; font-weight: 600;">
+                            <a href="tel:${escapeHtml(phone)}" style="color: #059669; text-decoration: none;">
+                              ${escapeHtml(phone)}
+                            </a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="padding: 14px 18px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B;">
+                            Email Address
+                          </td>
+                          <td style="padding: 14px 18px; font-size: 15px; font-weight: 600;">
+                            <a href="mailto:${escapeHtml(email)}" style="color: #059669; text-decoration: none;">
+                              ${escapeHtml(email)}
+                            </a>
+                          </td>
+                        </tr>
+                      </table>
+
+                      <!-- Project Details & Notes Box -->
+                      <div style="margin-bottom: 10px;">
+                        <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #475569; margin-bottom: 8px;">
+                          Project Details &amp; Notes
+                        </div>
+                        <div style="background-color: #F8FAFC; border: 1px solid #CBD5E1; border-left: 4px solid #059669; border-radius: 8px; padding: 16px 18px; font-size: 15px; line-height: 1.6; color: #0F172A; white-space: pre-wrap; word-break: break-word;">
+                          ${escapeHtml(project_details || "No additional project notes provided by the client.")}
+                        </div>
+                      </div>
+
+                    </td>
+                  </tr>
+
+                  <!-- Footer -->
+                  <tr>
+                    <td style="background-color: #F8FAFC; border-top: 1px solid #E2E8F0; padding: 18px 30px; font-size: 12px; color: #64748B; text-align: center; line-height: 1.5;">
+                      <div>Lead ID: <code style="font-family: monospace; color: #0F172A; background-color: #E2E8F0; padding: 2px 6px; border-radius: 4px;">${inserted.id}</code></div>
+                      <div style="margin-top: 4px;">Received: <strong>${formattedDate}</strong> (Alberta Time)</div>
+                    </td>
+                  </tr>
+
+                </table>
+              </td>
+            </tr>
+          </table>
         </body>
         </html>
       `;
 
-      // Email 2: Confirmation to Visitor
-      const visitorSubject = `We received your quote request - Keystone Renovations`;
+      // Email 2: Confirmation to Visitor (Clean, reassuring, high-trust)
+      const visitorSubject = `Quote Request Received - Keystone Renovations`;
       const visitorHtml = `
         <!DOCTYPE html>
-        <html>
+        <html lang="en">
         <head>
           <meta charset="utf-8">
-          <style>
-            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #F4EFE6; color: #0C1814; margin: 0; padding: 20px; }
-            .card { background-color: #FFFFFF; border: 1px solid #DCD6C2; border-radius: 8px; max-width: 600px; margin: 0 auto; padding: 36px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-            .header { border-bottom: 2px solid #071E17; padding-bottom: 20px; margin-bottom: 24px; }
-            .logo { font-size: 22px; font-weight: 800; color: #071E17; letter-spacing: 0.05em; }
-            .logo span { color: #C59B27; }
-            .sub { color: #5C7268; font-size: 13px; margin: 4px 0 0 0; text-transform: uppercase; }
-            .greeting { font-size: 18px; font-weight: 600; color: #071E17; margin-bottom: 16px; }
-            p { font-size: 15px; line-height: 1.6; color: #33443C; margin: 0 0 16px 0; }
-            .highlight-box { background-color: #F8F6F0; border-left: 4px solid #071E17; padding: 16px 20px; margin: 20px 0; border-radius: 0 6px 6px 0; }
-            .highlight-box .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: #5C7268; font-weight: 600; margin-bottom: 4px; }
-            .highlight-box .value { font-size: 16px; font-weight: 600; color: #071E17; }
-            .contact-cta { background-color: #071E17; color: #F4EFE6; padding: 20px; border-radius: 6px; margin: 28px 0; }
-            .contact-cta h3 { color: #7FE8C8; margin: 0 0 8px 0; font-size: 16px; }
-            .contact-cta p { color: #DCD6C2; font-size: 14px; margin: 0; }
-            .contact-cta a { color: #7FE8C8; font-weight: 600; text-decoration: none; }
-            .footer { margin-top: 32px; padding-top: 20px; border-top: 1px solid #EAE5D8; font-size: 12px; color: #8C9992; text-align: center; }
-          </style>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>We Received Your Quote Request - Keystone Renovations</title>
         </head>
-        <body>
-          <div class="card">
-            <div class="header">
-              <div class="logo">KEY<span>STONE</span> RENOVATIONS</div>
-              <div class="sub">Calgary &amp; Alberta Construction &amp; Renovation</div>
-            </div>
-            <div class="greeting">Hi ${escapeHtml(name)},</div>
-            <p>Thank you for reaching out to Keystone Renovations. We have received your request for <strong>${escapeHtml(service)}</strong>.</p>
-            <p>Our founding principle is simple: <em>"The crew that shows up should be the crew that finishes the job."</em> One of our estimators will review your project details and get back to you with a straight, no-pressure quote.</p>
-            
-            <div class="highlight-box">
-              <div class="label">Summary of your request</div>
-              <div class="value">${escapeHtml(service)}</div>
-              ${project_details ? `<div style="margin-top:8px; font-size:14px; color:#5C7268;">${escapeHtml(project_details)}</div>` : ""}
-            </div>
+        <body style="margin: 0; padding: 24px 12px; background-color: #F1F5F9; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;">
+          <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
+            <tr>
+              <td align="center">
+                <!-- Card Container -->
+                <table role="presentation" width="100%" style="max-width: 580px; background-color: #FFFFFF; border-radius: 12px; border: 1px solid #E2E8F0; box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06); overflow: hidden; text-align: left;" border="0" cellspacing="0" cellpadding="0">
+                  
+                  <!-- Top Header Banner -->
+                  <tr>
+                    <td style="background-color: #071E17; padding: 28px 32px; border-bottom: 3px solid #F59E0B;">
+                      <div style="font-size: 13px; font-weight: 700; letter-spacing: 0.12em; color: #A7F3D0; text-transform: uppercase; margin-bottom: 4px;">
+                        KEY<span style="color: #F59E0B;">STONE</span> RENOVATIONS
+                      </div>
+                      <div style="color: #94A3B8; font-size: 13px; margin: 0;">
+                        Calgary &amp; Alberta Construction &amp; Renovation
+                      </div>
+                    </td>
+                  </tr>
 
-            <div class="contact-cta">
-              <h3>Need immediate assistance?</h3>
-              <p>Give us a call directly at <a href="tel:4035054015">403 505 4015</a> or email us at <a href="mailto:gaurav.tyagi@keystonerenov.com">gaurav.tyagi@keystonerenov.com</a>.</p>
-            </div>
+                  <!-- Main Content Area -->
+                  <tr>
+                    <td style="padding: 32px 32px 24px;">
+                      
+                      <h2 style="color: #0F172A; font-size: 22px; font-weight: 800; margin: 0 0 16px 0;">
+                        Hi ${escapeHtml(name)},
+                      </h2>
 
-            <div class="footer">
-              Keystone Renovations &bull; Calgary, AB &bull; Licensed &amp; Insured across Alberta
-            </div>
-          </div>
+                      <p style="font-size: 15px; line-height: 1.6; color: #334155; margin: 0 0 16px 0;">
+                        Thank you for reaching out to <strong>Keystone Renovations</strong>. We have received your request for <strong>${escapeHtml(service)}</strong>.
+                      </p>
+
+                      <!-- Principle Quote Banner -->
+                      <div style="background-color: #F0FDF4; border: 1px solid #BBF7D0; border-left: 4px solid #10B981; border-radius: 8px; padding: 14px 18px; margin: 20px 0; font-size: 14px; color: #166534; font-style: italic; line-height: 1.5;">
+                        "The crew that shows up should be the crew that finishes the job."
+                        <span style="font-style: normal; display: block; font-weight: 600; font-size: 12px; color: #15803D; margin-top: 4px;">— Keystone Founding Principle</span>
+                      </div>
+
+                      <!-- What Happens Next -->
+                      <div style="margin: 24px 0;">
+                        <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #64748B; margin-bottom: 12px;">
+                          What to expect next
+                        </div>
+                        <table role="presentation" width="100%" border="0" cellspacing="0" cellpadding="0">
+                          <tr>
+                            <td style="padding: 8px 0; font-size: 14px; line-height: 1.5; color: #334155;">
+                              <strong style="color: #0F172A;">1. Project Review:</strong> An estimator will review your project details and scope within 1 business day.
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 8px 0; font-size: 14px; line-height: 1.5; color: #334155;">
+                              <strong style="color: #0F172A;">2. Honest Estimate:</strong> We provide straightforward, transparent pricing with no high-pressure sales tactics.
+                            </td>
+                          </tr>
+                          <tr>
+                            <td style="padding: 8px 0; font-size: 14px; line-height: 1.5; color: #334155;">
+                              <strong style="color: #0F172A;">3. Same Trusted Crew:</strong> No subcontracting the critical work to strangers — our team sees it through.
+                            </td>
+                          </tr>
+                        </table>
+                      </div>
+
+                      <!-- Submitted Details Summary -->
+                      <div style="background-color: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; padding: 16px 18px; margin-top: 24px;">
+                        <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748B; margin-bottom: 6px;">
+                          Summary of your request
+                        </div>
+                        <div style="font-size: 15px; font-weight: 700; color: #0F172A; margin-bottom: 6px;">
+                          ${escapeHtml(service)}
+                        </div>
+                        ${project_details ? `<div style="font-size: 14px; line-height: 1.5; color: #475569; border-top: 1px solid #E2E8F0; padding-top: 8px; margin-top: 8px;">${escapeHtml(project_details)}</div>` : ""}
+                      </div>
+
+                      <!-- Urgent Assistance CTA -->
+                      <div style="background-color: #071E17; border-radius: 8px; padding: 20px 22px; margin-top: 24px; color: #FFFFFF;">
+                        <div style="color: #A7F3D0; font-size: 15px; font-weight: 700; margin-bottom: 6px;">
+                          Need immediate assistance?
+                        </div>
+                        <p style="color: #CBD5E1; font-size: 14px; line-height: 1.5; margin: 0;">
+                          Call us directly at <a href="tel:4035054015" style="color: #F59E0B; font-weight: 700; text-decoration: none;">403 505 4015</a> or email us at <a href="mailto:gaurav.tyagi@keystonerenov.com" style="color: #34D399; font-weight: 600; text-decoration: none;">gaurav.tyagi@keystonerenov.com</a>.
+                        </p>
+                      </div>
+
+                    </td>
+                  </tr>
+
+                  <!-- Footer -->
+                  <tr>
+                    <td style="background-color: #F8FAFC; border-top: 1px solid #E2E8F0; padding: 20px 32px; font-size: 12px; color: #64748B; text-align: center; line-height: 1.5;">
+                      <div><strong>Keystone Renovations</strong> &bull; Calgary &amp; Edmonton &amp; Alberta-Wide</div>
+                      <div style="margin-top: 4px; color: #94A3B8;">Licensed &bull; Insured &bull; Over 20 Years of Craftsmanship</div>
+                    </td>
+                  </tr>
+
+                </table>
+              </td>
+            </tr>
+          </table>
         </body>
         </html>
       `;
